@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Delete Note - My Notes</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #f4f4f9;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background: #6c5ce7;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 0 20px;
+        }
+        .delete-box {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0px 3px 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .delete-box h2 {
+            color: #d63031;
+            margin-bottom: 20px;
+        }
+        .warning-message {
+            background: #fff3cd;
+            color: #856404;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #ffc107;
+            text-align: left;
+        }
+        .note-info {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            text-align: left;
+        }
+        .note-info h3 {
+            color: #2d3436;
+            margin-bottom: 10px;
+        }
+        .note-info p {
+            color: #636e72;
+            line-height: 1.6;
+            word-wrap: break-word;
+        }
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+        .btn {
+            text-decoration: none;
+            padding: 12px 30px;
+            border-radius: 5px;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .btn-delete {
+            background: #d63031;
+            color: white;
+        }
+        .btn-delete:hover {
+            background: #b52b2b;
+        }
+        .btn-cancel {
+            background: #6c5ce7;
+            color: white;
+        }
+        .btn-cancel:hover {
+            background: #5b4bc4;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Delete Note</h1>
+    </header>
+    <div class="container">
+        <div class="delete-box">
+            <h2>Are you sure?</h2>
+            
+            <div class="warning-message">
+                <strong>⚠️ This note will be moved to the recycle bin.</strong><br>
+                You can restore it within 15 days before it's permanently deleted.
+            </div>
+            
+            <div class="note-info">
+                <h3>{{ note.title }}</h3>
+                <p>{{ note.content }}</p>
+                <small>Created: {{ note.created_at|date:"M d, Y" }}</small>
+            </div>
+            
+            <form method="POST" class="form-actions">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-delete">Yes, move to Recycle Bin</button>
+                <a href="{% url 'home' %}" class="btn btn-cancel">Cancel</a>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

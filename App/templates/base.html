@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My Notes</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #f4f4f9;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background: #6c5ce7;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+        }
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .header-content h1 {
+            margin: 0;
+        }
+        .recycle-bin-link {
+            text-decoration: none;
+            background: #ff7675;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: background 0.3s;
+        }
+        .recycle-bin-link:hover {
+            background: #d63031;
+        }
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 0 10px;
+        }
+        .search-box {
+            display: flex;
+            margin-bottom: 20px;
+            justify-content: space-between;
+        }
+        .search-box input[type="text"] {
+            width: 70%;
+            padding: 10px;
+            border: 2px solid #6c5ce7;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .search-box button {
+            padding: 10px 20px;
+            background: #6c5ce7;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .search-box button:hover {
+            background: #5b4bc4;
+        }
+        .add-note-btn {
+            text-decoration: none;
+            background: #00b894;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            margin-left: 10px;
+        }
+        .add-note-btn:hover {
+            background: #00a187;
+        }
+        .notes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        .note-box {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0px 3px 10px rgba(0,0,0,0.1);
+            position: relative;
+            transition: transform 0.2s;
+        }
+        .note-box:hover {
+            transform: translateY(-5px);
+        }
+        .note-actions {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .note-actions a {
+            text-decoration: none;
+            color: white;
+            padding: 6px 10px;
+            border-radius: 5px;
+            font-size: 14px;
+            display: inline-block;
+        }
+        .note-actions a.edit {
+            background: #0984e3;
+        }
+        .note-actions a.edit:hover {
+            background: #0773c5;
+        }
+        .note-actions form {
+            margin: 0;
+            padding: 0;
+            display: inline-block;
+        }
+        .delete-btn {
+            background: #d63031;
+            color: white;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 5px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background 0.3s;
+            font-family: 'Arial', sans-serif;
+        }
+        .delete-btn:hover {
+            background: #b52b2b;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <h1>My Notes</h1>
+            <a href="{% url 'recycle_bin' %}" class="recycle-bin-link">🗑️ Recycle Bin</a>
+        </div>
+    </header>
+    <div class="container">
+        <form method="GET" class="search-box">
+            <input type="text" name="q" placeholder="Search notes..." value="{{ query }}">
+            <div>
+                <button type="submit">Search</button>
+                <a href="{% url 'note_create' %}" class="add-note-btn">Add Note</a>
+            </div>
+        </form>
+
+        <div class="notes-grid">
+            {% for note in notes %}
+            <div class="note-box">
+                <h2>{{ note.title }}</h2>
+                <p>{{ note.content|truncatewords:30 }}</p>
+                <small>Created: {{ note.created_at|date:"M d, Y" }}</small>
+                <div class="note-actions">
+                    <a href="{% url 'note_update' note.id %}" class="edit">Edit</a>
+                    
+                    <!-- Replace the delete link with this form -->
+                    <form method="POST" action="{% url 'note_delete' note.id %}" onsubmit="return confirm('Are you sure you want to delete this note? It will be moved to the recycle bin.');">
+                        {% csrf_token %}
+                        <button type="submit" class="delete-btn">Delete</button>
+                    </form>
+                </div>
+            </div>
+            {% empty %}
+            <p style="grid-column: 1/-1; text-align: center; padding: 50px; color: #666;">No notes found. Click "Add Note" to create your first note!</p>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>

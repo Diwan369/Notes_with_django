@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Recycle Bin - My Notes</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #f4f4f9;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background: #6c5ce7;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+        }
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .header-content h1 {
+            margin: 0;
+        }
+        .back-link {
+            text-decoration: none;
+            background: #00b894;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: background 0.3s;
+        }
+        .back-link:hover {
+            background: #00a187;
+        }
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 0 10px;
+        }
+        .notes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .note-box {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0px 3px 10px rgba(0,0,0,0.1);
+            position: relative;
+            border-left: 4px solid #d63031;
+            opacity: 0.9;
+        }
+        .note-box h2 {
+            color: #2d3436;
+            margin-bottom: 10px;
+        }
+        .note-box p {
+            color: #636e72;
+            line-height: 1.6;
+            margin-bottom: 15px;
+            word-wrap: break-word;
+        }
+        .deleted-info {
+            margin: 15px 0;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            font-size: 12px;
+        }
+        .deleted-info small {
+            display: block;
+            color: #666;
+            margin: 3px 0;
+        }
+        .days-left {
+            color: #e17055;
+            font-weight: bold;
+        }
+        .note-actions {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .note-actions form {
+            display: inline-block;
+            margin: 0;
+        }
+        .btn {
+            text-decoration: none;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-size: 14px;
+            border: none;
+            cursor: pointer;
+            transition: background 0.3s;
+            font-family: 'Arial', sans-serif;
+        }
+        .btn-restore {
+            background: #00b894;
+        }
+        .btn-restore:hover {
+            background: #00a187;
+        }
+        .btn-delete {
+            background: #d63031;
+        }
+        .btn-delete:hover {
+            background: #b52b2b;
+        }
+        .empty-bin {
+            text-align: center;
+            padding: 50px;
+            color: #666;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0px 3px 10px rgba(0,0,0,0.1);
+            grid-column: 1/-1;
+        }
+        .empty-bin h3 {
+            color: #2d3436;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <h1>Recycle Bin</h1>
+            <a href="{% url 'home' %}" class="back-link">← Back to Notes</a>
+        </div>
+    </header>
+    <div class="container">
+        <div class="notes-grid">
+            {% for note in notes %}
+            <div class="note-box">
+                <h2>{{ note.title }}</h2>
+                <p>{{ note.content|truncatewords:20 }}</p>
+                
+                <div class="deleted-info">
+                    <small>🗑️ Deleted: {{ note.deleted_at|date:"M d, Y H:i" }}</small>
+                </div>
+                
+                <div class="note-actions">
+                    <form method="POST" action="{% url 'note_restore' note.pk %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-restore">Restore Note</button>
+                    </form>
+                    
+                    <form method="POST" action="{% url 'note_permanent_delete' note.pk %}" 
+                          onsubmit="return confirm('WARNING: This will permanently delete the note. This action cannot be undone!');">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-delete">Delete Permanently</button>
+                    </form>
+                </div>
+            </div>
+            {% empty %}
+            <div class="empty-bin">
+                <h3>🗑️ Recycle bin is empty</h3>
+                <p>Deleted notes will appear here and stay for 15 days before being automatically deleted.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>
