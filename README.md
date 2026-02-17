@@ -15,8 +15,7 @@ A feature-rich notes management application built with Django that allows users 
 - Django
 - Python
 - HTML/CSS
-- Bootstrap (if used)
-- SQLite/PostgreSQL
+- SQLite
 
 ## How It Works
 
